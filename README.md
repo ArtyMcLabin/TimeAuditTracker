@@ -7,10 +7,11 @@ A CLI-style time tracking application inspired by Dan Martell's Time & Energy Au
 ## How It Works
 
 1. **Run the script** - Double-click `time_tracker.pyw` (no console window) or `time_tracker.py`
-2. **Every 15 minutes** - The window pops to the foreground once and reminds you to log
-3. **Enter your activity** - Type in the single-line format shown below
-4. **Press Enter** - Saves immediately and shows confirmation with timestamp
-5. **Timer resets** - 15 minutes countdown starts from your last submission
+2. **Set your interval** - Default is 5 minutes, change via dropdown (1-30 minutes)
+3. **Timer countdown** - Window title shows remaining time (e.g., "TimeAudit - 04:32")
+4. **When time's up** - Window pops up and title changes to "Clock Now!"
+5. **Enter your activity** - Type in the flexible format shown below
+6. **Press Enter** - Saves immediately, timer resets, countdown restarts
 
 ## Entry Format
 
@@ -47,6 +48,8 @@ team meeting w$$
 
 ## Features
 
+- ✅ **Configurable timer** - Default 5 min, choose 1-30 min via dropdown, saved to settings.ini
+- ✅ **Live countdown** - Window title shows remaining time (e.g., "TimeAudit - 04:32")
 - ✅ **Single timer** - No timer duplication, clean countdown display
 - ✅ **One entry at a time** - Fast, simple Enter-to-save workflow
 - ✅ **Instant feedback** - Status label shows timestamp of saved entry
@@ -54,7 +57,7 @@ team meeting w$$
 - ✅ **Excel in script folder** - All data saved alongside the script
 - ✅ **Quick access buttons** - Open Excel file or containing folder with one click
 - ✅ **No quit confirmation** - Just close when you want to quit
-- ✅ **Pops up once** - Non-intrusive reminder every 15 minutes
+- ✅ **Pops up once** - Non-intrusive reminder at your chosen interval
 - ✅ **Active window** - Runs until you close it manually
 
 ## Running the App
