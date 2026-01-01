@@ -27,6 +27,9 @@ wheels/
 *.xlsx
 *.xls
 
+# Config files (user settings)
+*.ini
+
 # IDEs
 .vscode/
 .idea/

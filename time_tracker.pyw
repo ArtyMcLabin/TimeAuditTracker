@@ -8,7 +8,7 @@ Copyright (c) 2026 Arty McLabin
 """
 
 import tkinter as tk
-from tkinter import messagebox
+from tkinter import ttk, messagebox
 import threading
 import time
 from datetime import datetime
@@ -17,6 +17,7 @@ from openpyxl.styles import PatternFill, Font
 import os
 import re
 import sys
+import configparser
 
 class TimeTracker:
     def __init__(self):
@@ -24,13 +25,17 @@ class TimeTracker:
         self.root.title("TimeAudit - 15:00")
         self.root.geometry("700x300")
 
-        # Get script directory for Excel file
+        # Get script directory for Excel file and config
         self.script_dir = os.path.dirname(os.path.abspath(__file__))
         self.excel_file = os.path.join(self.script_dir, "time_audit.xlsx")
+        self.config_file = os.path.join(self.script_dir, "settings.ini")
+
+        # Load settings
+        self.timer_minutes = self.load_settings()
+
         self.setup_excel()
 
         # Timer setup - single timer, no duplication
-        self.timer_minutes = 15
         self.timer_start_time = None
         self.timer_running = False
         self.has_popped = False
@@ -45,6 +50,28 @@ class TimeTracker:
         self.setup_ui()
         self.reset_timer()
         self.start_timer_display()
+
+    def load_settings(self):
+        """Load settings from .ini file, create with defaults if doesn't exist"""
+        config = configparser.ConfigParser()
+
+        if os.path.exists(self.config_file):
+            config.read(self.config_file)
+            timer_minutes = config.getint('Timer', 'interval_minutes', fallback=5)
+        else:
+            # Create default config
+            timer_minutes = 5
+            self.save_settings(timer_minutes)
+
+        return timer_minutes
+
+    def save_settings(self, timer_minutes):
+        """Save settings to .ini file"""
+        config = configparser.ConfigParser()
+        config['Timer'] = {'interval_minutes': str(timer_minutes)}
+
+        with open(self.config_file, 'w') as f:
+            config.write(f)
 
     def setup_excel(self):
         """Initialize Excel file with headers if it doesn't exist"""
@@ -87,6 +114,40 @@ class TimeTracker:
             fg='#ffff00'
         )
         self.timer_label.pack(pady=5)
+
+        # Timer interval selector
+        interval_frame = tk.Frame(self.root, bg='#1e1e1e')
+        interval_frame.pack(pady=5)
+
+        interval_label = tk.Label(
+            interval_frame,
+            text="Timer interval:",
+            font=('Consolas', 9),
+            bg='#1e1e1e',
+            fg='#00ff00'
+        )
+        interval_label.pack(side=tk.LEFT, padx=5)
+
+        self.interval_var = tk.StringVar(value=str(self.timer_minutes))
+        interval_combo = ttk.Combobox(
+            interval_frame,
+            textvariable=self.interval_var,
+            values=['1', '5', '10', '15', '20', '25', '30'],
+            width=5,
+            state='readonly',
+            font=('Consolas', 9)
+        )
+        interval_combo.pack(side=tk.LEFT, padx=5)
+        interval_combo.bind('<<ComboboxSelected>>', self.on_interval_change)
+
+        interval_suffix = tk.Label(
+            interval_frame,
+            text="minutes",
+            font=('Consolas', 9),
+            bg='#1e1e1e',
+            fg='#00ff00'
+        )
+        interval_suffix.pack(side=tk.LEFT)
 
         # Status label (shows save confirmation)
         self.status_label = tk.Label(
@@ -338,6 +399,17 @@ class TimeTracker:
                 text=f'❌ Failed to open folder: {str(e)}',
                 fg='#ff0000'
             )
+
+    def on_interval_change(self, event=None):
+        """Handle timer interval change"""
+        new_interval = int(self.interval_var.get())
+        self.timer_minutes = new_interval
+        self.save_settings(new_interval)
+        self.reset_timer()
+        self.status_label.config(
+            text=f'⏱️ Timer interval changed to {new_interval} minutes',
+            fg='#ffff00'
+        )
 
     def on_closing(self):
         """Handle window close event - no confirmation"""
