@@ -40,6 +40,10 @@ class TimeTracker:
         self.timer_running = False
         self.has_popped = False
 
+        # Last entry tracking for prefill
+        self.last_color = None
+        self.last_dollars = None
+
         # Color mapping for Excel
         self.color_fills = {
             'green': PatternFill(start_color='90EE90', end_color='90EE90', fill_type='solid'),
@@ -364,8 +368,17 @@ class TimeTracker:
 
             wb.save(self.excel_file)
 
-            # Clear entry field
+            # Store last entry for prefill
+            self.last_color = color
+            self.last_dollars = dollars
+
+            # Clear entry field and prefill with last color/dollars
             self.entry_field.delete(0, tk.END)
+
+            # Prefill with abbreviated color and dollars
+            color_abbrev = color[0]  # First letter: g, r, or w
+            prefill = f"{color_abbrev} {dollars} "
+            self.entry_field.insert(0, prefill)
 
             # Reset timer - single timer, just reset the start time
             self.reset_timer()
