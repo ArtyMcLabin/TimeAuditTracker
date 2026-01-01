@@ -108,15 +108,17 @@ class TimeTracker:
 
         instructions = tk.Label(
             header_frame,
-            text='Format: color (g/r/w) + $ + activity (any order)\nExamples: "g$$ activity" or "$$r activity" or "activity w$$"',
+            text='Instructions: github.com/ArtyMcLabin/TimeAuditTracker',
             font=('Segoe UI', 9),
             justify=tk.CENTER,
             bg='#16213e',
-            fg='#e8e8e8',
+            fg='#a8a8a8',
             padx=15,
-            pady=12
+            pady=12,
+            cursor='hand2'
         )
         instructions.pack()
+        instructions.bind('<Button-1>', lambda e: os.startfile('https://github.com/ArtyMcLabin/TimeAuditTracker'))
 
         # Timer display with modern styling
         self.timer_label = tk.Label(
