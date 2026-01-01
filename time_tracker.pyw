@@ -8,7 +8,7 @@ Copyright (c) 2026 Arty McLabin
 """
 
 import tkinter as tk
-from tkinter import ttk, messagebox
+from tkinter import messagebox
 import threading
 import time
 from datetime import datetime
@@ -129,16 +129,21 @@ class TimeTracker:
         interval_label.pack(side=tk.LEFT, padx=5)
 
         self.interval_var = tk.StringVar(value=str(self.timer_minutes))
-        interval_combo = ttk.Combobox(
+        interval_entry = tk.Entry(
             interval_frame,
             textvariable=self.interval_var,
-            values=['1', '5', '10', '15', '20', '25', '30'],
             width=5,
-            state='readonly',
-            font=('Consolas', 9)
+            font=('Consolas', 9),
+            bg='#0c0c0c',
+            fg='#00ff00',
+            insertbackground='#00ff00',
+            selectbackground='#264f78',
+            relief=tk.FLAT,
+            borderwidth=2
         )
-        interval_combo.pack(side=tk.LEFT, padx=5)
-        interval_combo.bind('<<ComboboxSelected>>', self.on_interval_change)
+        interval_entry.pack(side=tk.LEFT, padx=5)
+        interval_entry.bind('<Return>', self.on_interval_change)
+        interval_entry.bind('<FocusOut>', self.on_interval_change)
 
         interval_suffix = tk.Label(
             interval_frame,
@@ -401,15 +406,28 @@ class TimeTracker:
             )
 
     def on_interval_change(self, event=None):
-        """Handle timer interval change"""
-        new_interval = int(self.interval_var.get())
-        self.timer_minutes = new_interval
-        self.save_settings(new_interval)
-        self.reset_timer()
-        self.status_label.config(
-            text=f'⏱️ Timer interval changed to {new_interval} minutes',
-            fg='#ffff00'
-        )
+        """Handle timer interval change with validation"""
+        try:
+            new_interval = int(self.interval_var.get())
+
+            # Validate range (1-999 minutes)
+            if new_interval < 1 or new_interval > 999:
+                raise ValueError("Interval must be between 1 and 999 minutes")
+
+            self.timer_minutes = new_interval
+            self.save_settings(new_interval)
+            self.reset_timer()
+            self.status_label.config(
+                text=f'⏱️ Timer interval changed to {new_interval} minutes',
+                fg='#ffff00'
+            )
+        except ValueError as e:
+            # Invalid input, revert to previous value
+            self.interval_var.set(str(self.timer_minutes))
+            self.status_label.config(
+                text=f'❌ Invalid interval: enter 1-999 minutes',
+                fg='#ff0000'
+            )
 
     def on_closing(self):
         """Handle window close event - no confirmation"""

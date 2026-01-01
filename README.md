@@ -7,7 +7,7 @@ A CLI-style time tracking application inspired by Dan Martell's Time & Energy Au
 ## How It Works
 
 1. **Run the script** - Double-click `time_tracker.pyw`
-2. **Set your interval** - Default is 5 minutes, change via dropdown (1-30 minutes)
+2. **Set your interval** - Default is 5 minutes, enter any number (1-999 minutes)
 3. **Timer countdown** - Window title shows remaining time (e.g., "TimeAudit - 04:32")
 4. **When time's up** - Window pops up and title changes to "Clock Now!"
 5. **Enter your activity** - Type in the flexible format shown below
@@ -48,7 +48,7 @@ team meeting w$$
 
 ## Features
 
-- ✅ **Configurable timer** - Default 5 min, choose 1-30 min via dropdown, saved to settings.ini
+- ✅ **Configurable timer** - Default 5 min, enter any interval (1-999 min), saved to settings.ini
 - ✅ **Live countdown** - Window title shows remaining time (e.g., "TimeAudit - 04:32")
 - ✅ **Single timer** - No timer duplication, clean countdown display
 - ✅ **One entry at a time** - Fast, simple Enter-to-save workflow
