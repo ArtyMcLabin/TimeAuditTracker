@@ -7,10 +7,10 @@ A CLI-style time tracking application inspired by Dan Martell's Time & Energy Au
 ## How It Works
 
 1. **Run the script** - Double-click `time_tracker.pyw` (no console window) or `time_tracker.py`
-2. **Every 15 minutes** - The window pops to the foreground and reminds you to log
-3. **Enter your activities** - One per line in the format shown below
-4. **Submit** - Click "Submit Entries" or press Ctrl+Enter
-5. **Timer resets** - 15 minutes start from your last submission
+2. **Every 15 minutes** - The window pops to the foreground once and reminds you to log
+3. **Enter your activity** - Type in the single-line format shown below
+4. **Press Enter** - Saves immediately and shows confirmation with timestamp
+5. **Timer resets** - 15 minutes countdown starts from your last submission
 
 ## Entry Format
 
@@ -42,13 +42,14 @@ green $$$ coding new feature
 
 ## Features
 
-- ✅ Pops up every 15 minutes (non-intrusive - only once)
-- ✅ Enter multiple activities at once
-- ✅ Timer resets from last submission
-- ✅ Saves to Excel with color coding
-- ✅ Tracks date/time of each entry
-- ✅ Active window (runs until you close it)
-- ✅ No nagging - patiently waits for your input
+- ✅ **Single timer** - No timer duplication, clean countdown display
+- ✅ **One entry at a time** - Fast, simple Enter-to-save workflow
+- ✅ **Instant feedback** - Status label shows timestamp of saved entry
+- ✅ **No dialogs** - No popup interruptions, just inline confirmation
+- ✅ **Excel in script folder** - All data saved alongside the script
+- ✅ **No quit confirmation** - Just close when you want to quit
+- ✅ **Pops up once** - Non-intrusive reminder every 15 minutes
+- ✅ **Active window** - Runs until you close it manually
 
 ## Running the App
 

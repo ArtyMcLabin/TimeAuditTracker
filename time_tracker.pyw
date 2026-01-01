@@ -8,7 +8,7 @@ Copyright (c) 2026 Arty McLabin
 """
 
 import tkinter as tk
-from tkinter import scrolledtext, messagebox
+from tkinter import messagebox
 import threading
 import time
 from datetime import datetime
@@ -22,17 +22,18 @@ class TimeTracker:
     def __init__(self):
         self.root = tk.Tk()
         self.root.title("Time Tracker - Dan Martell Method")
-        self.root.geometry("600x400")
+        self.root.geometry("700x300")
 
-        # Excel file setup
-        self.excel_file = "time_audit.xlsx"
+        # Get script directory for Excel file
+        self.script_dir = os.path.dirname(os.path.abspath(__file__))
+        self.excel_file = os.path.join(self.script_dir, "time_audit.xlsx")
         self.setup_excel()
 
-        # Timer setup
+        # Timer setup - single timer, no duplication
         self.timer_minutes = 15
-        self.timer_thread = None
+        self.timer_start_time = None
         self.timer_running = False
-        self.has_popped = False  # Track if we've already popped up for this cycle
+        self.has_popped = False
 
         # Color mapping for Excel
         self.color_fills = {
@@ -42,7 +43,8 @@ class TimeTracker:
         }
 
         self.setup_ui()
-        self.start_timer()
+        self.reset_timer()
+        self.start_timer_display()
 
     def setup_excel(self):
         """Initialize Excel file with headers if it doesn't exist"""
@@ -66,7 +68,7 @@ class TimeTracker:
         # Instructions
         instructions = tk.Label(
             self.root,
-            text='Enter your activities (one per line):\nFormat: "green $$ did some coding" or "red $$$ boring meeting"',
+            text='Format: "green $$ activity" or "red $$$ activity" or "white $ activity"\nPress Enter to save',
             font=('Consolas', 10),
             justify=tk.LEFT,
             bg='#1e1e1e',
@@ -86,71 +88,84 @@ class TimeTracker:
         )
         self.timer_label.pack(pady=5)
 
-        # Text input area (CLI-style)
-        self.text_area = scrolledtext.ScrolledText(
+        # Status label (shows save confirmation)
+        self.status_label = tk.Label(
             self.root,
-            width=70,
-            height=15,
-            font=('Consolas', 11),
+            text="",
+            font=('Consolas', 10),
+            bg='#1e1e1e',
+            fg='#00ff00',
+            height=2
+        )
+        self.status_label.pack(fill=tk.X, padx=10)
+
+        # Single-line entry field
+        entry_frame = tk.Frame(self.root, bg='#1e1e1e')
+        entry_frame.pack(padx=10, pady=10, fill=tk.BOTH, expand=True)
+
+        entry_label = tk.Label(
+            entry_frame,
+            text=">",
+            font=('Consolas', 14, 'bold'),
+            bg='#1e1e1e',
+            fg='#00ff00'
+        )
+        entry_label.pack(side=tk.LEFT, padx=(5, 5))
+
+        self.entry_field = tk.Entry(
+            entry_frame,
+            font=('Consolas', 14),
             bg='#0c0c0c',
             fg='#00ff00',
             insertbackground='#00ff00',
             selectbackground='#264f78',
-            wrap=tk.WORD
+            relief=tk.FLAT,
+            borderwidth=2
         )
-        self.text_area.pack(padx=10, pady=10, fill=tk.BOTH, expand=True)
-        self.text_area.focus()
+        self.entry_field.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=(0, 10))
+        self.entry_field.focus()
 
-        # Submit button
-        submit_btn = tk.Button(
-            self.root,
-            text="Submit Entries",
-            command=self.submit_entries,
-            font=('Consolas', 11, 'bold'),
-            bg='#0e639c',
-            fg='#ffffff',
-            activebackground='#1177bb',
-            activeforeground='#ffffff',
-            padx=20,
-            pady=10,
-            cursor='hand2'
-        )
-        submit_btn.pack(pady=10)
-
-        # Bind Ctrl+Enter to submit
-        self.root.bind('<Control-Return>', lambda e: self.submit_entries())
+        # Bind Enter to submit
+        self.entry_field.bind('<Return>', lambda e: self.submit_entry())
 
         # Set window colors
         self.root.configure(bg='#1e1e1e')
 
-        # Handle window close
+        # Handle window close - no confirmation
         self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
 
-    def start_timer(self):
-        """Start the 15-minute countdown timer"""
-        self.timer_running = True
+    def reset_timer(self):
+        """Reset the timer to start a new 15-minute countdown"""
+        self.timer_start_time = time.time()
         self.has_popped = False
-        self.timer_thread = threading.Thread(target=self.countdown, daemon=True)
-        self.timer_thread.start()
+        self.timer_running = True
 
-    def countdown(self):
-        """Countdown from 15 minutes and pop window when done"""
-        total_seconds = self.timer_minutes * 60
+    def start_timer_display(self):
+        """Single timer thread that updates display and handles popup"""
+        def timer_loop():
+            while True:
+                if not self.timer_running:
+                    time.sleep(0.1)
+                    continue
 
-        while total_seconds > 0 and self.timer_running:
-            mins, secs = divmod(total_seconds, 60)
-            time_str = f"Next reminder in: {mins:02d}:{secs:02d}"
+                elapsed = time.time() - self.timer_start_time
+                remaining = (self.timer_minutes * 60) - elapsed
 
-            # Update timer display
-            self.timer_label.config(text=time_str)
+                if remaining <= 0:
+                    if not self.has_popped:
+                        self.pop_window()
+                        self.has_popped = True
+                    # Keep showing alert until user submits
+                    self.timer_label.config(text="⏰ TIME TO LOG! ⏰", fg='#ff0000')
+                else:
+                    mins, secs = divmod(int(remaining), 60)
+                    time_str = f"Next reminder in: {mins:02d}:{secs:02d}"
+                    self.timer_label.config(text=time_str, fg='#ffff00')
 
-            time.sleep(1)
-            total_seconds -= 1
+                time.sleep(1)
 
-        if self.timer_running and not self.has_popped:
-            # Time's up! Pop the window to foreground
-            self.pop_window()
-            self.has_popped = True
+        timer_thread = threading.Thread(target=timer_loop, daemon=True)
+        timer_thread.start()
 
     def pop_window(self):
         """Bring window to foreground (pop up)"""
@@ -158,13 +173,10 @@ class TimeTracker:
         self.root.attributes('-topmost', True)
         self.root.after_idle(self.root.attributes, '-topmost', False)
         self.root.focus_force()
-        self.text_area.focus()
+        self.entry_field.focus()
 
         # Flash the window to get attention
         self.root.state('normal')  # Ensure it's not minimized
-
-        # Update timer label to show it's time
-        self.timer_label.config(text="⏰ TIME TO LOG! ⏰", fg='#ff0000')
 
     def parse_entry(self, line):
         """Parse a single entry line
@@ -187,34 +199,21 @@ class TimeTracker:
         else:
             return None
 
-    def submit_entries(self):
-        """Process and save all entries to Excel"""
-        text = self.text_area.get("1.0", tk.END)
-        lines = [line.strip() for line in text.split('\n') if line.strip()]
+    def submit_entry(self):
+        """Process and save entry to Excel"""
+        text = self.entry_field.get().strip()
 
-        if not lines:
-            messagebox.showwarning("No entries", "Please enter at least one activity.")
+        if not text:
             return
 
-        # Parse all entries
-        entries = []
-        invalid_lines = []
+        # Parse entry
+        parsed = self.parse_entry(text)
 
-        for line in lines:
-            parsed = self.parse_entry(line)
-            if parsed:
-                entries.append(parsed)
-            else:
-                invalid_lines.append(line)
-
-        if invalid_lines:
-            msg = "Invalid format in these lines:\n" + "\n".join(invalid_lines)
-            msg += '\n\nExpected format: "green $$ activity description"'
-            messagebox.showerror("Invalid Format", msg)
-            return
-
-        if not entries:
-            messagebox.showwarning("No valid entries", "No valid entries to save.")
+        if not parsed:
+            self.status_label.config(
+                text='❌ Invalid format! Use: "green $$ activity" or "red $$$ activity" or "white $ activity"',
+                fg='#ff0000'
+            )
             return
 
         # Save to Excel
@@ -223,39 +222,42 @@ class TimeTracker:
             ws = wb.active
 
             timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            color, dollars, activity = parsed
 
-            for color, dollars, activity in entries:
-                row = [timestamp, color.capitalize(), dollars, activity]
-                ws.append(row)
+            row = [timestamp, color.capitalize(), dollars, activity]
+            ws.append(row)
 
-                # Apply color to the entire row
-                row_num = ws.max_row
-                for col in range(1, 5):
-                    cell = ws.cell(row=row_num, column=col)
-                    cell.fill = self.color_fills[color]
+            # Apply color to the entire row
+            row_num = ws.max_row
+            for col in range(1, 5):
+                cell = ws.cell(row=row_num, column=col)
+                cell.fill = self.color_fills[color]
 
             wb.save(self.excel_file)
 
-            # Clear text area
-            self.text_area.delete("1.0", tk.END)
+            # Clear entry field
+            self.entry_field.delete(0, tk.END)
 
-            # Reset timer
-            self.timer_running = False
-            time.sleep(0.1)  # Give time for thread to stop
-            self.start_timer()
+            # Reset timer - single timer, just reset the start time
+            self.reset_timer()
 
-            # Show success message
-            messagebox.showinfo("Success", f"Saved {len(entries)} entr{'y' if len(entries) == 1 else 'ies'} to {self.excel_file}")
+            # Show success with timestamp
+            self.status_label.config(
+                text=f'✓ Saved at {timestamp}: {color.upper()} {dollars} {activity}',
+                fg='#00ff00'
+            )
 
         except Exception as e:
-            messagebox.showerror("Error", f"Failed to save entries:\n{str(e)}")
+            self.status_label.config(
+                text=f'❌ Error: {str(e)}',
+                fg='#ff0000'
+            )
 
     def on_closing(self):
-        """Handle window close event"""
-        if messagebox.askokcancel("Quit", "Do you want to quit the Time Tracker?"):
-            self.timer_running = False
-            self.root.destroy()
-            sys.exit(0)
+        """Handle window close event - no confirmation"""
+        self.timer_running = False
+        self.root.destroy()
+        sys.exit(0)
 
     def run(self):
         """Start the application"""
