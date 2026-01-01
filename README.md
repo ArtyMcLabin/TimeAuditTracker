@@ -14,16 +14,12 @@ A CLI-style time tracking application inspired by Dan Martell's Time & Energy Au
 
 ## Entry Format
 
-```
-green $$ activity description
-red $$$ another activity
-white $ low value task
-```
+**Super flexible!** Color, dollars, and activity can be in **any order** with or **without spaces**.
 
-**Color codes:**
-- `green` = Energizing tasks (things you enjoy)
-- `red` = Draining tasks (things that drain your energy)
-- `white` = Neutral tasks
+**Color codes (use full name or abbreviation):**
+- `green` or `g` = Energizing tasks (things you enjoy)
+- `red` or `r` = Draining tasks (things that drain your energy)
+- `white` or `w` = Neutral tasks
 
 **Dollar signs ($):**
 - `$` = ~$10/hour tasks (low value)
@@ -31,13 +27,22 @@ white $ low value task
 - `$$$` = ~$250/hour tasks
 - `$$$$` = $500+/hour tasks (high value strategic work)
 
-## Examples
+## Examples (all valid!)
 
 ```
 green $$$$ strategic planning for Q1
+g$$$$ strategic planning for Q1
+$$$$g strategic planning for Q1
+strategic planning for Q1 g$$$$
+
 red $ responding to emails
+r$ responding to emails
+$r responding to emails
+
 white $$ team meeting
-green $$$ coding new feature
+w$$ team meeting
+$$w team meeting
+team meeting w$$
 ```
 
 ## Features

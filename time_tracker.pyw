@@ -68,8 +68,8 @@ class TimeTracker:
         # Instructions
         instructions = tk.Label(
             self.root,
-            text='Format: "green $$ activity" or "red $$$ activity" or "white $ activity"\nPress Enter to save',
-            font=('Consolas', 10),
+            text='Format: color (g/r/w or green/red/white) + dollars + activity (any order, spaces optional)\nExamples: "g$$ activity" or "$$r activity" or "white activity$$" | Press Enter to save',
+            font=('Consolas', 9),
             justify=tk.LEFT,
             bg='#1e1e1e',
             fg='#00ff00',
@@ -179,25 +179,41 @@ class TimeTracker:
         self.root.state('normal')  # Ensure it's not minimized
 
     def parse_entry(self, line):
-        """Parse a single entry line
-        Format: "green $$ did some coding"
+        """Parse a single entry line - position agnostic
+        Accepts: "green $$ activity", "$$ g activity", "r activity $$", "g$$activity", etc.
+        Color can be: green/g, red/r, white/w (with or without spaces)
         Returns: (color, dollars, activity) or None if invalid
         """
         line = line.strip()
         if not line:
             return None
 
-        # Pattern: (color) (dollars) (activity)
-        pattern = r'^(green|red|white)\s+(\$+)\s+(.+)$'
-        match = re.match(pattern, line, re.IGNORECASE)
-
-        if match:
-            color = match.group(1).lower()
-            dollars = match.group(2)
-            activity = match.group(3)
-            return (color, dollars, activity)
-        else:
+        # Find color word or abbreviation (case insensitive, no word boundary)
+        color_match = re.search(r'(green|red|white|g|r|w)', line, re.IGNORECASE)
+        if not color_match:
             return None
+
+        # Map abbreviations to full color names
+        color_raw = color_match.group(1).lower()
+        color_map = {'g': 'green', 'r': 'red', 'w': 'white'}
+        color = color_map.get(color_raw, color_raw)
+
+        # Find dollar signs
+        dollars_match = re.search(r'\$+', line)
+        if not dollars_match:
+            return None
+        dollars = dollars_match.group(0)
+
+        # Remove color and dollars from line to get activity
+        activity = line
+        activity = re.sub(r'(green|red|white|g|r|w)', '', activity, flags=re.IGNORECASE)
+        activity = re.sub(r'\$+', '', activity)
+        activity = ' '.join(activity.split())  # Clean up extra whitespace
+
+        if not activity:
+            return None
+
+        return (color, dollars, activity)
 
     def submit_entry(self):
         """Process and save entry to Excel"""
