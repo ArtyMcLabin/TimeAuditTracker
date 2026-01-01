@@ -6,7 +6,7 @@ A CLI-style time tracking application inspired by Dan Martell's Time & Energy Au
 
 ## How It Works
 
-1. **Run the script** - The window stays open and active on your screen
+1. **Run the script** - Double-click `time_tracker.pyw` (no console window) or `time_tracker.py`
 2. **Every 15 minutes** - The window pops to the foreground and reminds you to log
 3. **Enter your activities** - One per line in the format shown below
 4. **Submit** - Click "Submit Entries" or press Ctrl+Enter
@@ -52,10 +52,9 @@ green $$$ coding new feature
 
 ## Running the App
 
-### Option 1: Double-click
-Double-click `run.bat`
+**Double-click `time_tracker.pyw`** - runs without showing a console window
 
-### Option 2: Command line
+Or from command line:
 ```bash
 python time_tracker.py
 ```
