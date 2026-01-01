@@ -23,7 +23,7 @@ class TimeTracker:
     def __init__(self):
         self.root = tk.Tk()
         self.root.title("TimeAudit - 15:00")
-        self.root.geometry("700x300")
+        self.root.geometry("750x350")
 
         # Get script directory for Excel file and config
         self.script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -99,162 +99,164 @@ class TimeTracker:
 
     def setup_ui(self):
         """Create the UI"""
-        # Instructions
-        instructions = tk.Label(
-            self.root,
-            text='Format: color (g/r/w or green/red/white) + dollars + activity (any order, spaces optional)\nExamples: "g$$ activity" or "$$r activity" or "white activity$$" | Press Enter to save',
-            font=('Consolas', 9),
-            justify=tk.LEFT,
-            bg='#1e1e1e',
-            fg='#00ff00',
-            padx=10,
-            pady=10
-        )
-        instructions.pack(fill=tk.X)
+        # Modern dark background
+        self.root.configure(bg='#1a1a2e')
 
-        # Timer display
+        # Header with instructions
+        header_frame = tk.Frame(self.root, bg='#16213e', relief=tk.FLAT)
+        header_frame.pack(fill=tk.X, pady=(0, 10))
+
+        instructions = tk.Label(
+            header_frame,
+            text='Format: color (g/r/w) + $ + activity (any order)\nExamples: "g$$ activity" or "$$r activity" or "activity w$$"',
+            font=('Segoe UI', 9),
+            justify=tk.CENTER,
+            bg='#16213e',
+            fg='#e8e8e8',
+            padx=15,
+            pady=12
+        )
+        instructions.pack()
+
+        # Timer display with modern styling
         self.timer_label = tk.Label(
             self.root,
             text="Next reminder in: 15:00",
-            font=('Consolas', 12, 'bold'),
-            bg='#1e1e1e',
-            fg='#ffff00'
+            font=('Segoe UI', 16, 'bold'),
+            bg='#1a1a2e',
+            fg='#4ecca3'
         )
-        self.timer_label.pack(pady=5)
+        self.timer_label.pack(pady=(10, 5))
 
-        # Timer interval selector
-        interval_frame = tk.Frame(self.root, bg='#1e1e1e')
-        interval_frame.pack(pady=5)
+        # Timer interval selector with modern styling
+        interval_frame = tk.Frame(self.root, bg='#1a1a2e')
+        interval_frame.pack(pady=8)
 
         interval_label = tk.Label(
             interval_frame,
-            text="Timer interval:",
-            font=('Consolas', 9),
-            bg='#1e1e1e',
-            fg='#00ff00'
+            text="Interval:",
+            font=('Segoe UI', 10),
+            bg='#1a1a2e',
+            fg='#a8a8a8'
         )
-        interval_label.pack(side=tk.LEFT, padx=5)
+        interval_label.pack(side=tk.LEFT, padx=(0, 8))
 
         self.interval_var = tk.StringVar(value=str(self.timer_minutes))
         interval_entry = tk.Entry(
             interval_frame,
             textvariable=self.interval_var,
             width=5,
-            font=('Consolas', 9),
-            bg='#0c0c0c',
-            fg='#00ff00',
-            insertbackground='#00ff00',
-            selectbackground='#264f78',
+            font=('Segoe UI', 10),
+            bg='#16213e',
+            fg='#e8e8e8',
+            insertbackground='#4ecca3',
+            selectbackground='#0f3460',
             relief=tk.FLAT,
-            borderwidth=2
+            borderwidth=0,
+            highlightthickness=1,
+            highlightbackground='#2a2a40',
+            highlightcolor='#4ecca3'
         )
-        interval_entry.pack(side=tk.LEFT, padx=5)
+        interval_entry.pack(side=tk.LEFT, padx=5, ipady=4)
         interval_entry.bind('<Return>', self.on_interval_change)
         interval_entry.bind('<FocusOut>', self.on_interval_change)
 
         interval_suffix = tk.Label(
             interval_frame,
-            text="minutes",
-            font=('Consolas', 9),
-            bg='#1e1e1e',
-            fg='#00ff00'
+            text="min",
+            font=('Segoe UI', 10),
+            bg='#1a1a2e',
+            fg='#a8a8a8'
         )
-        interval_suffix.pack(side=tk.LEFT)
+        interval_suffix.pack(side=tk.LEFT, padx=(8, 0))
 
-        # Status label (shows save confirmation)
+        # Status label (shows save confirmation) with modern styling
         self.status_label = tk.Label(
             self.root,
-            text="",
-            font=('Consolas', 10),
-            bg='#1e1e1e',
-            fg='#00ff00',
+            text="Ready to track...",
+            font=('Segoe UI', 10),
+            bg='#1a1a2e',
+            fg='#a8a8a8',
             height=2
         )
-        self.status_label.pack(fill=tk.X, padx=10)
+        self.status_label.pack(fill=tk.X, padx=15, pady=(5, 0))
 
-        # Buttons frame
-        buttons_frame = tk.Frame(self.root, bg='#1e1e1e')
-        buttons_frame.pack(pady=5)
+        # Buttons frame with modern styling
+        buttons_frame = tk.Frame(self.root, bg='#1a1a2e')
+        buttons_frame.pack(pady=10)
+
+        # Modern button style
+        btn_style = {
+            'font': ('Segoe UI', 9),
+            'bg': '#16213e',
+            'fg': '#e8e8e8',
+            'activebackground': '#0f3460',
+            'activeforeground': '#4ecca3',
+            'cursor': 'hand2',
+            'relief': tk.FLAT,
+            'borderwidth': 0,
+            'padx': 15,
+            'pady': 8
+        }
 
         # Open Excel button
         open_excel_btn = tk.Button(
             buttons_frame,
-            text="📊 Open Excel",
+            text="📊 Excel",
             command=self.open_excel,
-            font=('Consolas', 9, 'bold'),
-            bg='#0e639c',
-            fg='#ffffff',
-            activebackground='#1177bb',
-            activeforeground='#ffffff',
-            cursor='hand2',
-            padx=10,
-            pady=5
+            **btn_style
         )
-        open_excel_btn.pack(side=tk.LEFT, padx=5)
+        open_excel_btn.pack(side=tk.LEFT, padx=4)
 
         # Open folder button
         open_folder_btn = tk.Button(
             buttons_frame,
-            text="📁 Open Folder",
+            text="📁 Folder",
             command=self.open_folder,
-            font=('Consolas', 9, 'bold'),
-            bg='#0e639c',
-            fg='#ffffff',
-            activebackground='#1177bb',
-            activeforeground='#ffffff',
-            cursor='hand2',
-            padx=10,
-            pady=5
+            **btn_style
         )
-        open_folder_btn.pack(side=tk.LEFT, padx=5)
+        open_folder_btn.pack(side=tk.LEFT, padx=4)
 
         # Reset timer button
         reset_timer_btn = tk.Button(
             buttons_frame,
-            text="🔄 Reset Timer",
+            text="🔄 Reset",
             command=self.manual_reset_timer,
-            font=('Consolas', 9, 'bold'),
-            bg='#0e639c',
-            fg='#ffffff',
-            activebackground='#1177bb',
-            activeforeground='#ffffff',
-            cursor='hand2',
-            padx=10,
-            pady=5
+            **btn_style
         )
-        reset_timer_btn.pack(side=tk.LEFT, padx=5)
+        reset_timer_btn.pack(side=tk.LEFT, padx=4)
 
-        # Single-line entry field
-        entry_frame = tk.Frame(self.root, bg='#1e1e1e')
-        entry_frame.pack(padx=10, pady=10, fill=tk.BOTH, expand=True)
+        # Single-line entry field with modern styling
+        entry_frame = tk.Frame(self.root, bg='#1a1a2e')
+        entry_frame.pack(padx=20, pady=(10, 20), fill=tk.BOTH, expand=True)
 
         entry_label = tk.Label(
             entry_frame,
-            text=">",
-            font=('Consolas', 14, 'bold'),
-            bg='#1e1e1e',
-            fg='#00ff00'
+            text="❯",
+            font=('Segoe UI', 18, 'bold'),
+            bg='#1a1a2e',
+            fg='#4ecca3'
         )
-        entry_label.pack(side=tk.LEFT, padx=(5, 5))
+        entry_label.pack(side=tk.LEFT, padx=(0, 10))
 
         self.entry_field = tk.Entry(
             entry_frame,
-            font=('Consolas', 14),
-            bg='#0c0c0c',
-            fg='#00ff00',
-            insertbackground='#00ff00',
-            selectbackground='#264f78',
+            font=('Segoe UI', 14),
+            bg='#16213e',
+            fg='#e8e8e8',
+            insertbackground='#4ecca3',
+            selectbackground='#0f3460',
             relief=tk.FLAT,
-            borderwidth=2
+            borderwidth=0,
+            highlightthickness=2,
+            highlightbackground='#2a2a40',
+            highlightcolor='#4ecca3'
         )
-        self.entry_field.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=(0, 10))
+        self.entry_field.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, ipady=8)
         self.entry_field.focus()
 
         # Bind Enter to submit
         self.entry_field.bind('<Return>', lambda e: self.submit_entry())
-
-        # Set window colors
-        self.root.configure(bg='#1e1e1e')
 
         # Track focus events
         self.root.bind('<FocusIn>', self.on_focus_gained)
@@ -285,12 +287,12 @@ class TimeTracker:
                         self.pop_window()
                         self.has_popped = True
                     # Keep showing alert until user submits
-                    self.timer_label.config(text="⏰ TIME TO LOG! ⏰", fg='#ff0000')
+                    self.timer_label.config(text="⏰ TIME TO LOG! ⏰", fg='#e94560')
                     self.root.title("Clock Now!")
                 else:
                     mins, secs = divmod(int(remaining), 60)
                     time_str = f"Next reminder in: {mins:02d}:{secs:02d}"
-                    self.timer_label.config(text=time_str, fg='#ffff00')
+                    self.timer_label.config(text=time_str, fg='#4ecca3')
                     # Update window title with remaining time
                     self.root.title(f"TimeAudit - {mins:02d}:{secs:02d}")
 
@@ -362,8 +364,8 @@ class TimeTracker:
 
         if not parsed:
             self.status_label.config(
-                text='❌ Invalid format! Use: "green $$ activity" or "red $$$ activity" or "white $ activity"',
-                fg='#ff0000'
+                text='❌ Invalid format! Use: "g $$ activity" or "r $$$ activity" or "w $ activity"',
+                fg='#e94560'
             )
             return
 
@@ -412,13 +414,13 @@ class TimeTracker:
             # Show success with timestamp
             self.status_label.config(
                 text=f'✓ Saved at {date_str} {time_str}: {color.upper()} {dollars} {activity}',
-                fg='#00ff00'
+                fg='#4ecca3'
             )
 
         except Exception as e:
             self.status_label.config(
                 text=f'❌ Error: {str(e)}',
-                fg='#ff0000'
+                fg='#e94560'
             )
 
     def open_excel(self):
@@ -429,12 +431,12 @@ class TimeTracker:
             except Exception as e:
                 self.status_label.config(
                     text=f'❌ Failed to open Excel: {str(e)}',
-                    fg='#ff0000'
+                    fg='#e94560'
                 )
         else:
             self.status_label.config(
                 text='❌ Excel file does not exist yet. Create an entry first!',
-                fg='#ff0000'
+                fg='#e94560'
             )
 
     def open_folder(self):
@@ -444,7 +446,7 @@ class TimeTracker:
         except Exception as e:
             self.status_label.config(
                 text=f'❌ Failed to open folder: {str(e)}',
-                fg='#ff0000'
+                fg='#e94560'
             )
 
     def on_interval_change(self, event=None):
@@ -461,14 +463,14 @@ class TimeTracker:
             self.reset_timer()
             self.status_label.config(
                 text=f'⏱️ Timer interval changed to {new_interval} minutes',
-                fg='#ffff00'
+                fg='#f3a683'
             )
         except ValueError as e:
             # Invalid input, revert to previous value
             self.interval_var.set(str(self.timer_minutes))
             self.status_label.config(
                 text=f'❌ Invalid interval: enter 1-999 minutes',
-                fg='#ff0000'
+                fg='#e94560'
             )
 
     def on_focus_gained(self, event=None):
@@ -494,7 +496,7 @@ class TimeTracker:
         self.reset_timer()
         self.status_label.config(
             text='🔄 Timer manually reset',
-            fg='#ffff00'
+            fg='#f3a683'
         )
 
     def on_closing(self):
