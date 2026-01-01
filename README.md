@@ -6,7 +6,7 @@ A CLI-style time tracking application inspired by Dan Martell's Time & Energy Au
 
 ## How It Works
 
-1. **Run the script** - Double-click `time_tracker.pyw` (no console window) or `time_tracker.py`
+1. **Run the script** - Double-click `time_tracker.pyw`
 2. **Set your interval** - Default is 5 minutes, change via dropdown (1-30 minutes)
 3. **Timer countdown** - Window title shows remaining time (e.g., "TimeAudit - 04:32")
 4. **When time's up** - Window pops up and title changes to "Clock Now!"
@@ -62,12 +62,7 @@ team meeting w$$
 
 ## Running the App
 
-**Double-click `time_tracker.pyw`** - runs without showing a console window
-
-Or from command line:
-```bash
-python time_tracker.py
-```
+**Double-click `time_tracker.pyw`** - Clean GUI, no console window
 
 ## Output
 
