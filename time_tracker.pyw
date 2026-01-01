@@ -84,8 +84,8 @@ class TimeTracker:
             ws = wb.active
             ws.title = "Time Audit"
 
-            # Headers - separate Date and Time columns, added Interval
-            headers = ['Date', 'Time', 'Interval', 'Energy', 'Value', 'Activity']
+            # Headers - Date, Day of Week, Time, Activity, Energy, Value, Interval
+            headers = ['Date', 'Day', 'Time', 'Activity', 'Energy', 'Value', 'Interval']
             ws.append(headers)
 
             # Make headers bold
@@ -352,18 +352,20 @@ class TimeTracker:
             now = datetime.now()
             # Date format: 1jan2026
             date_str = now.strftime("%d%b%Y").lower()
+            # Day of week: Monday, Tuesday, etc.
+            day_of_week = now.strftime("%A")
             # Time format: 14:05
             time_str = now.strftime("%H:%M")
 
             color, dollars, activity = parsed
 
-            # Include the current timer interval setting
-            row = [date_str, time_str, self.timer_minutes, color.capitalize(), dollars, activity]
+            # Column order: Date, Day, Time, Activity, Energy, Value, Interval
+            row = [date_str, day_of_week, time_str, activity, color.capitalize(), dollars, self.timer_minutes]
             ws.append(row)
 
             # Apply color to the entire row
             row_num = ws.max_row
-            for col in range(1, 7):  # Updated to 7 columns (was 6)
+            for col in range(1, 8):  # 7 columns total
                 cell = ws.cell(row=row_num, column=col)
                 cell.fill = self.color_fills[color]
 
@@ -457,5 +459,19 @@ class TimeTracker:
         self.root.mainloop()
 
 if __name__ == "__main__":
+    # Auto-close any existing instances
+    import psutil
+    current_pid = os.getpid()
+    script_name = os.path.basename(__file__)
+
+    for proc in psutil.process_iter(['pid', 'name', 'cmdline']):
+        try:
+            # Check if it's a python process running this script
+            if proc.info['cmdline'] and len(proc.info['cmdline']) > 1:
+                if script_name in ' '.join(proc.info['cmdline']) and proc.info['pid'] != current_pid:
+                    proc.kill()
+        except (psutil.NoSuchProcess, psutil.AccessDenied):
+            pass
+
     app = TimeTracker()
     app.run()
