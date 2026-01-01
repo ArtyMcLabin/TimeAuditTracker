@@ -285,21 +285,23 @@ class TimeTracker:
 
     def parse_entry(self, line):
         """Parse a single entry line - position agnostic
-        Accepts: "green $$ activity", "$$ g activity", "r activity $$", "g$$activity", etc.
-        Color can be: green/g, red/r, white/w (with or without spaces)
+        Accepts: "green $$ activity", "$$ g activity", "r activity $$", "activity g $$", etc.
+        Color can be: green/g, red/r, white/w (anywhere in the string)
         Returns: (color, dollars, activity) or None if invalid
         """
         line = line.strip()
         if not line:
             return None
 
-        # Find color word or abbreviation (case insensitive, no word boundary)
-        color_match = re.search(r'(green|red|white|g|r|w)', line, re.IGNORECASE)
+        # Find color with proper word boundaries
+        # Full names need \b, single letters need to not be part of another word
+        color_pattern = r'\b(green|red|white)\b|(?<![a-zA-Z])(g|r|w)(?![a-zA-Z])'
+        color_match = re.search(color_pattern, line, re.IGNORECASE)
         if not color_match:
             return None
 
-        # Map abbreviations to full color names
-        color_raw = color_match.group(1).lower()
+        # Get matched color from either group 1 or 2
+        color_raw = (color_match.group(1) or color_match.group(2)).lower()
         color_map = {'g': 'green', 'r': 'red', 'w': 'white'}
         color = color_map.get(color_raw, color_raw)
 
@@ -310,8 +312,9 @@ class TimeTracker:
         dollars = dollars_match.group(0)
 
         # Remove color and dollars from line to get activity
-        activity = line
-        activity = re.sub(r'(green|red|white|g|r|w)', '', activity, flags=re.IGNORECASE)
+        # Remove the exact color match at its position (only once)
+        activity = line[:color_match.start()] + line[color_match.end():]
+        # Remove all dollar signs
         activity = re.sub(r'\$+', '', activity)
         activity = ' '.join(activity.split())  # Clean up extra whitespace
 
