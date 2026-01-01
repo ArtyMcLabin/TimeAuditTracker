@@ -69,6 +69,7 @@ team meeting w$$
 All entries are saved to `time_audit.xlsx` in the same folder with:
 - **Date** (format: `01jan2026`)
 - **Time** (format: `14:05`)
+- **Interval** (timer setting at time of entry, e.g., `5`)
 - **Energy** level (Green/Red/White)
 - **Value** ($-$$$$)
 - **Activity** description

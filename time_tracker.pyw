@@ -84,8 +84,8 @@ class TimeTracker:
             ws = wb.active
             ws.title = "Time Audit"
 
-            # Headers - separate Date and Time columns
-            headers = ['Date', 'Time', 'Energy', 'Value', 'Activity']
+            # Headers - separate Date and Time columns, added Interval
+            headers = ['Date', 'Time', 'Interval', 'Energy', 'Value', 'Activity']
             ws.append(headers)
 
             # Make headers bold
@@ -357,12 +357,13 @@ class TimeTracker:
 
             color, dollars, activity = parsed
 
-            row = [date_str, time_str, color.capitalize(), dollars, activity]
+            # Include the current timer interval setting
+            row = [date_str, time_str, self.timer_minutes, color.capitalize(), dollars, activity]
             ws.append(row)
 
             # Apply color to the entire row
             row_num = ws.max_row
-            for col in range(1, 6):
+            for col in range(1, 7):  # Updated to 7 columns (was 6)
                 cell = ws.cell(row=row_num, column=col)
                 cell.fill = self.color_fills[color]
 
