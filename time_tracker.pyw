@@ -44,6 +44,9 @@ class TimeTracker:
         self.last_color = None
         self.last_dollars = None
 
+        # Track last restore time to prevent immediate re-minimize
+        self.last_restore_time = 0
+
         # Color mapping for Excel
         self.color_fills = {
             'green': PatternFill(start_color='90EE90', end_color='90EE90', fill_type='solid'),
@@ -253,7 +256,8 @@ class TimeTracker:
         # Set window colors
         self.root.configure(bg='#1e1e1e')
 
-        # Minimize window when clicking outside (loses focus)
+        # Track focus events
+        self.root.bind('<FocusIn>', self.on_focus_gained)
         self.root.bind('<FocusOut>', self.on_focus_lost)
 
         # Handle window close - no confirmation
@@ -467,11 +471,23 @@ class TimeTracker:
                 fg='#ff0000'
             )
 
+    def on_focus_gained(self, event=None):
+        """Track when window gains focus (restored from minimized)"""
+        self.last_restore_time = time.time()
+
     def on_focus_lost(self, event=None):
         """Minimize window when clicking outside"""
         # Only minimize if it's not already minimized
-        if self.root.state() == 'normal':
-            self.root.iconify()
+        if self.root.state() != 'normal':
+            return
+
+        # Don't minimize if we just restored (within 0.5 seconds)
+        time_since_restore = time.time() - self.last_restore_time
+        if time_since_restore < 0.5:
+            return
+
+        # Minimize the window
+        self.root.iconify()
 
     def manual_reset_timer(self):
         """Manually reset the timer countdown"""
