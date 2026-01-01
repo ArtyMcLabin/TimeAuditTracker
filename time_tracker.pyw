@@ -53,8 +53,8 @@ class TimeTracker:
             ws = wb.active
             ws.title = "Time Audit"
 
-            # Headers
-            headers = ['Date & Time', 'Energy', 'Value', 'Activity']
+            # Headers - separate Date and Time columns
+            headers = ['Date', 'Time', 'Energy', 'Value', 'Activity']
             ws.append(headers)
 
             # Make headers bold
@@ -221,15 +221,20 @@ class TimeTracker:
             wb = load_workbook(self.excel_file)
             ws = wb.active
 
-            timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            now = datetime.now()
+            # Date format: 1jan2026
+            date_str = now.strftime("%d%b%Y").lower()
+            # Time format: 14:05
+            time_str = now.strftime("%H:%M")
+
             color, dollars, activity = parsed
 
-            row = [timestamp, color.capitalize(), dollars, activity]
+            row = [date_str, time_str, color.capitalize(), dollars, activity]
             ws.append(row)
 
             # Apply color to the entire row
             row_num = ws.max_row
-            for col in range(1, 5):
+            for col in range(1, 6):
                 cell = ws.cell(row=row_num, column=col)
                 cell.fill = self.color_fills[color]
 
@@ -243,7 +248,7 @@ class TimeTracker:
 
             # Show success with timestamp
             self.status_label.config(
-                text=f'✓ Saved at {timestamp}: {color.upper()} {dollars} {activity}',
+                text=f'✓ Saved at {date_str} {time_str}: {color.upper()} {dollars} {activity}',
                 fg='#00ff00'
             )
 

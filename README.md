@@ -63,10 +63,11 @@ python time_tracker.py
 ## Output
 
 All entries are saved to `time_audit.xlsx` in the same folder with:
-- Date & Time
-- Energy level (Green/Red/White)
-- Value ($-$$$$)
-- Activity description
+- **Date** (format: `01jan2026`)
+- **Time** (format: `14:05`)
+- **Energy** level (Green/Red/White)
+- **Value** ($-$$$$)
+- **Activity** description
 - Color-coded rows matching your input
 
 ## Notes
