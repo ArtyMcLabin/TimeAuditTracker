@@ -21,7 +21,7 @@ import sys
 class TimeTracker:
     def __init__(self):
         self.root = tk.Tk()
-        self.root.title("Time Tracker - Dan Martell Method")
+        self.root.title("TimeAudit - 15:00")
         self.root.geometry("700x300")
 
         # Get script directory for Excel file
@@ -193,10 +193,13 @@ class TimeTracker:
                         self.has_popped = True
                     # Keep showing alert until user submits
                     self.timer_label.config(text="⏰ TIME TO LOG! ⏰", fg='#ff0000')
+                    self.root.title("Clock Now!")
                 else:
                     mins, secs = divmod(int(remaining), 60)
                     time_str = f"Next reminder in: {mins:02d}:{secs:02d}"
                     self.timer_label.config(text=time_str, fg='#ffff00')
+                    # Update window title with remaining time
+                    self.root.title(f"TimeAudit - {mins:02d}:{secs:02d}")
 
                 time.sleep(1)
 
