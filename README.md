@@ -52,6 +52,7 @@ team meeting w$$
 - ✅ **Instant feedback** - Status label shows timestamp of saved entry
 - ✅ **No dialogs** - No popup interruptions, just inline confirmation
 - ✅ **Excel in script folder** - All data saved alongside the script
+- ✅ **Quick access buttons** - Open Excel file or containing folder with one click
 - ✅ **No quit confirmation** - Just close when you want to quit
 - ✅ **Pops up once** - Non-intrusive reminder every 15 minutes
 - ✅ **Active window** - Runs until you close it manually

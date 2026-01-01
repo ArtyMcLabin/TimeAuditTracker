@@ -99,6 +99,42 @@ class TimeTracker:
         )
         self.status_label.pack(fill=tk.X, padx=10)
 
+        # Buttons frame
+        buttons_frame = tk.Frame(self.root, bg='#1e1e1e')
+        buttons_frame.pack(pady=5)
+
+        # Open Excel button
+        open_excel_btn = tk.Button(
+            buttons_frame,
+            text="📊 Open Excel",
+            command=self.open_excel,
+            font=('Consolas', 9, 'bold'),
+            bg='#0e639c',
+            fg='#ffffff',
+            activebackground='#1177bb',
+            activeforeground='#ffffff',
+            cursor='hand2',
+            padx=10,
+            pady=5
+        )
+        open_excel_btn.pack(side=tk.LEFT, padx=5)
+
+        # Open folder button
+        open_folder_btn = tk.Button(
+            buttons_frame,
+            text="📁 Open Folder",
+            command=self.open_folder,
+            font=('Consolas', 9, 'bold'),
+            bg='#0e639c',
+            fg='#ffffff',
+            activebackground='#1177bb',
+            activeforeground='#ffffff',
+            cursor='hand2',
+            padx=10,
+            pady=5
+        )
+        open_folder_btn.pack(side=tk.LEFT, padx=5)
+
         # Single-line entry field
         entry_frame = tk.Frame(self.root, bg='#1e1e1e')
         entry_frame.pack(padx=10, pady=10, fill=tk.BOTH, expand=True)
@@ -271,6 +307,32 @@ class TimeTracker:
         except Exception as e:
             self.status_label.config(
                 text=f'❌ Error: {str(e)}',
+                fg='#ff0000'
+            )
+
+    def open_excel(self):
+        """Open the Excel file with the default application"""
+        if os.path.exists(self.excel_file):
+            try:
+                os.startfile(self.excel_file)
+            except Exception as e:
+                self.status_label.config(
+                    text=f'❌ Failed to open Excel: {str(e)}',
+                    fg='#ff0000'
+                )
+        else:
+            self.status_label.config(
+                text='❌ Excel file does not exist yet. Create an entry first!',
+                fg='#ff0000'
+            )
+
+    def open_folder(self):
+        """Open the folder containing the script and Excel file"""
+        try:
+            os.startfile(self.script_dir)
+        except Exception as e:
+            self.status_label.config(
+                text=f'❌ Failed to open folder: {str(e)}',
                 fg='#ff0000'
             )
 
