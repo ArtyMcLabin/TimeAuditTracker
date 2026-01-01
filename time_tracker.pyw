@@ -205,6 +205,22 @@ class TimeTracker:
         )
         open_folder_btn.pack(side=tk.LEFT, padx=5)
 
+        # Reset timer button
+        reset_timer_btn = tk.Button(
+            buttons_frame,
+            text="🔄 Reset Timer",
+            command=self.manual_reset_timer,
+            font=('Consolas', 9, 'bold'),
+            bg='#0e639c',
+            fg='#ffffff',
+            activebackground='#1177bb',
+            activeforeground='#ffffff',
+            cursor='hand2',
+            padx=10,
+            pady=5
+        )
+        reset_timer_btn.pack(side=tk.LEFT, padx=5)
+
         # Single-line entry field
         entry_frame = tk.Frame(self.root, bg='#1e1e1e')
         entry_frame.pack(padx=10, pady=10, fill=tk.BOTH, expand=True)
@@ -456,6 +472,14 @@ class TimeTracker:
         # Only minimize if it's not already minimized
         if self.root.state() == 'normal':
             self.root.iconify()
+
+    def manual_reset_timer(self):
+        """Manually reset the timer countdown"""
+        self.reset_timer()
+        self.status_label.config(
+            text='🔄 Timer manually reset',
+            fg='#ffff00'
+        )
 
     def on_closing(self):
         """Handle window close event - no confirmation"""
