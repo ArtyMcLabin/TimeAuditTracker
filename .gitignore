@@ -26,6 +26,7 @@ wheels/
 # Excel files (user data)
 *.xlsx
 *.xls
+*_backup.xlsx
 
 # Config files (user settings)
 *.ini

@@ -237,6 +237,9 @@ class TimeTracker:
         # Set window colors
         self.root.configure(bg='#1e1e1e')
 
+        # Minimize window when clicking outside (loses focus)
+        self.root.bind('<FocusOut>', self.on_focus_lost)
+
         # Handle window close - no confirmation
         self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
 
@@ -447,6 +450,12 @@ class TimeTracker:
                 text=f'❌ Invalid interval: enter 1-999 minutes',
                 fg='#ff0000'
             )
+
+    def on_focus_lost(self, event=None):
+        """Minimize window when clicking outside"""
+        # Only minimize if it's not already minimized
+        if self.root.state() == 'normal':
+            self.root.iconify()
 
     def on_closing(self):
         """Handle window close event - no confirmation"""
