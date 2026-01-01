@@ -7,11 +7,13 @@ A CLI-style time tracking application inspired by Dan Martell's Time & Energy Au
 ## How It Works
 
 1. **Run the script** - Double-click `time_tracker.pyw`
-2. **Set your interval** - Default is 5 minutes, enter any number (1-999 minutes)
+2. **Set your interval** - Default is 5 minutes (customizable 1-999 minutes)
 3. **Timer countdown** - Window title shows remaining time (e.g., "TimeAudit - 04:32")
 4. **When time's up** - Window pops up and title changes to "Clock Now!"
 5. **Enter your activity** - Type in the flexible format shown below
 6. **Press Enter** - Saves immediately, timer resets, countdown restarts
+
+**Note on 5-minute default:** While Dan Martell's original method uses 15-minute intervals, this implementation defaults to 5 minutes to better accommodate the multitasking culture of the AI era where context-switching is more frequent.
 
 ## Entry Format
 
